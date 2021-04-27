@@ -67,10 +67,10 @@ const Carousel = styled(Slider)`
     overflow: initial;
   }
   .slick-prev {
-    left: -75px;
+    left: -45px;
   }
   .slick-next {
-    right: -75px;
+    right: -45px;
   }
 `;
 
@@ -95,9 +95,10 @@ const Wrap = styled.div`
       border: 4px solid rgba(249, 249, 249, 0.8);
       transition-duration: 300ms;
     }
+    @media (max-width: 768px) {
+      
+    }
   }
 `;
-
-
 
 export default ImgSlider;
