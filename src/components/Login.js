@@ -1,13 +1,63 @@
+import { useEffect } from 'react'
+import React from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux'; //dispatch actions to store and retrieve stuff 
+import { useHistory } from 'react-router-dom';
+import { auth, provider } from "../firebase";
+import { selectUserName, selectUserPhoto, setUserLoginDetails, setSignOutState } from '../features/user/userSlice';
+
+ 
+  const Login = (props) => {
+
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const userName = useSelector(selectUserName);
+    const userPhoto = useSelector(selectUserPhoto);
 
 
-const Login = (props) => {
+    useEffect(() => {
+        auth.onAuthStateChanged(async(user) =>{
+            if(user){
+            setUser(user)
+            history.push('/home')
+            }
+    })
+   }, [userName]);
+
+
+    const handleAuth = () => {
+      if (!userName) {
+        auth
+          .signInWithPopup(provider)
+          .then((result) => {
+            setUser(result.user);
+          })
+          .catch((error) => {
+            alert(error.message);
+          }); 
+      }else if(userName){
+        auth.signOut().then(() =>{
+          dispatch(setSignOutState())
+          history.push('/')
+        }).catch((err) => alert (err.message))
+      }
+    };
+
+    const setUser = (user) => {
+      dispatch(
+        setUserLoginDetails({
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+        })
+      );
+    };
     return(
         <Container>
             <Content>
                 <CTA>
                     <CTALogoOne src="/images/cta-logo-one.svg" alt=""/>
-                    <SignUp>GET ALL THE ACCESS</SignUp>
+                    <SignUp onClick={handleAuth}>GET ALL THE ACCESS</SignUp>
                     <Description>
                         Get Premier Access  to Raya and the Last Dragon for an additional fee with Disney+ subscription. As of 03/26/21, the price of Disney+ and the Disney Bundle will increase by 1$.
                     </Description>
